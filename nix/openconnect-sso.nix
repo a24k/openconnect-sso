@@ -4,7 +4,6 @@
 , python3Packages
 , poetry2nix
 , substituteAll
-, wrapQtAppsHook
 }:
 
 poetry2nix.mkPoetryApplication {
@@ -12,19 +11,14 @@ poetry2nix.mkPoetryApplication {
   pyproject = ../pyproject.toml;
   poetrylock = ../poetry.lock;
   python = python3;
-  buildInputs = [ wrapQtAppsHook ];
+  buildInputs = [];
   propagatedBuildInputs = [ openconnect ];
-
-  dontWrapQtApps = true;
-  makeWrapperArgs = [
-    "\${qtWrapperArgs[@]}"
-  ];
 
   overrides = [
     poetry2nix.defaultPoetryOverrides
     (
       self: super: {
-        inherit (python3Packages) cryptography keyring pyqt5 pyqtwebengine six more-itertools toml;
+        inherit (python3Packages) cryptography keyring six more-itertools toml;
         coverage_enable_subprocess = with python3.pkgs; buildPythonPackage rec {
           pname = "coverage_enable_subprocess";
           version = "1.0";
