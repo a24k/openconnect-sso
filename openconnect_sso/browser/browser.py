@@ -23,6 +23,7 @@ class Browser:
         self.proxy = proxy
         self.display_mode = display_mode
         self.cookies = {}
+        self.scripts = []
 
     def __enter__(self):
         chrome_options = Options()
@@ -58,25 +59,17 @@ class Browser:
     def authenticate_at(self, url, credentials, login_final_url):
         self.driver.get(url)
 
-        if credentials:
-            for url_pattern, rules in self.cfg.auto_fill_rules.items():
-                script = f"""
-// ==UserScript==
-// @include {url_pattern}
-// ==/UserScript==
-
-{get_selectors(rules, credentials)}
-"""
-                self.driver.execute_script(script)
+        self.make_auto_fill_scripts(credentials)
 
         logger.info("Waiting for browser")
         WebDriverWait(self.driver, 90, poll_frequency=1).until(lambda driver:
                 self.find_cookies()
                 and
-                self.driver.execute_script(script) == None
+                self.execute_auto_fill_scripts()
                 and
                 driver.current_url == login_final_url
                 )
+        self.find_cookies()
         logger.info("Browser exited")
 
     def find_cookies(self):
@@ -87,6 +80,24 @@ class Browser:
 
     def get_cookie(self, cookie_name):
         return self.cookies[cookie_name]
+
+    def make_auto_fill_scripts(self, credentials):
+        self.scripts = []
+        if credentials:
+            for url_pattern, rules in self.cfg.auto_fill_rules.items():
+                self.scripts.append(f"""
+// ==UserScript==
+// @include {url_pattern}
+// ==/UserScript==
+
+{get_selectors(rules, credentials)}
+""")
+        return self.scripts
+
+    def execute_auto_fill_scripts(self):
+        for script in self.scripts:
+            self.driver.execute_script(script)
+        return True
 
     def __exit__(self, exc_type, exc_value, t):
         self.driver.close()
