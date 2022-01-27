@@ -62,7 +62,7 @@ class Browser:
         self.make_auto_fill_scripts(credentials)
 
         logger.info("Waiting for browser")
-        WebDriverWait(self.driver, 90, poll_frequency=1).until(lambda driver:
+        WebDriverWait(self.driver, 90, poll_frequency=0.5).until(lambda driver:
                 self.find_cookies()
                 and
                 self.execute_auto_fill_scripts()
@@ -100,7 +100,7 @@ class Browser:
         return True
 
     def __exit__(self, exc_type, exc_value, t):
-        self.driver.close()
+        self.driver.quit()
         return True
 
 def get_selectors(rules, credentials):
