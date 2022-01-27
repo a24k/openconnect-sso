@@ -57,6 +57,7 @@ class Browser:
 
     def authenticate_at(self, url, credentials, login_final_url):
         self.driver.get(url)
+
         if credentials:
             for url_pattern, rules in self.cfg.auto_fill_rules.items():
                 script = f"""
@@ -64,16 +65,15 @@ class Browser:
 // @include {url_pattern}
 // ==/UserScript==
 
-function autoFill() {{
-    {get_selectors(rules, credentials)}
-    setTimeout(autoFill, 1000);
-}}
-autoFill();
+{get_selectors(rules, credentials)}
 """
-        self.driver.execute_script(script)
+                self.driver.execute_script(script)
+
         logger.info("Waiting for browser")
-        WebDriverWait(self.driver, 90).until(lambda driver:
+        WebDriverWait(self.driver, 90, poll_frequency=1).until(lambda driver:
                 self.find_cookies()
+                and
+                self.driver.execute_script(script) == None
                 and
                 driver.current_url == login_final_url
                 )
