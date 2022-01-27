@@ -22,10 +22,12 @@ class Browser:
         self.cfg = config.load()
         self.proxy = proxy
         self.display_mode = display_mode
+        self.cookies = {}
 
     def __enter__(self):
         chrome_options = Options()
         capabilities = DesiredCapabilities.CHROME
+
         if self.display_mode == DisplayMode.HIDDEN:
             chrome_options.add_argument("headless")
             chrome_options.add_argument("no-sandbox")
@@ -53,7 +55,7 @@ class Browser:
         )
         return self
 
-    def authenticate_at(self, url, credentials, expected_cookie_name):
+    def authenticate_at(self, url, credentials, login_final_url):
         self.driver.get(url)
         if credentials:
             for url_pattern, rules in self.cfg.auto_fill_rules.items():
@@ -69,25 +71,26 @@ function autoFill() {{
 autoFill();
 """
         self.driver.execute_script(script)
-        WebDriverWait(self.driver, 10).until(lambda driver: has_cookie(driver.get_cookies(), expected_cookie_name))
-        return get_cookie(self.driver.get_cookies(), expected_cookie_name)
+        logger.info("Waiting for browser")
+        WebDriverWait(self.driver, 90).until(lambda driver:
+                self.find_cookies()
+                and
+                driver.current_url == login_final_url
+                )
+        logger.info("Browser exited")
+
+    def find_cookies(self):
+        for cookie in self.driver.get_cookies():
+            logger.debug(f"Cookie found: {cookie['name']}")
+            self.cookies[cookie["name"]] = cookie["value"]
+        return True
+
+    def get_cookie(self, cookie_name):
+        return self.cookies[cookie_name]
 
     def __exit__(self, exc_type, exc_value, t):
         self.driver.close()
         return True
-
-
-def has_cookie(cookies, cookie_name):
-    return get_cookie(cookies, cookie_name) is not None
-
-
-def get_cookie(cookies, cookie_name):
-    for c in cookies:
-        if c["name"] == cookie_name:
-            return c["value"]
-
-    return None
-
 
 def get_selectors(rules, credentials):
     statements = []
