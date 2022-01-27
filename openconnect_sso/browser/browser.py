@@ -60,6 +60,7 @@ class Browser:
         self.driver.get(url)
 
         self.make_auto_fill_scripts(credentials)
+        self.execute_auto_fill_scripts()
 
         logger.info("Waiting for browser")
         WebDriverWait(self.driver, 90, poll_frequency=0.5).until(lambda driver:
