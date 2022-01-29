@@ -5,9 +5,9 @@
 }:
 
 let
-  pythonPackages = pkgs.python3Packages;
-
-  openconnect-sso = callPackage ./openconnect-sso.nix { inherit (pkgs) python3Packages; };
+  openconnect-sso = (import ./openconnect-sso.nix) {
+      inherit (pkgs) lib openconnect python3 python3Packages poetry2nix substituteAll;
+  };
 
   shell = pkgs.mkShell {
     buildInputs = with pkgs; [
@@ -20,7 +20,7 @@ let
       nixpkgs-fmt # To format Nix source files
       poetry # Dependency manager for Python
     ] ++ (
-      with pythonPackages; [
+      with pkgs.python3Packages; [
         pre-commit # To check coding style during commit
       ]
     ) ++ (
