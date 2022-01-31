@@ -5,9 +5,7 @@
 }:
 
 let
-  openconnect-sso = (import ./openconnect-sso.nix) {
-      inherit (pkgs) lib openconnect python3 python3Packages poetry2nix substituteAll;
-  };
+  openconnect-sso = pkgs.python3Packages.callPackage ./openconnect-sso.nix {};
 
   shell = pkgs.mkShell {
     buildInputs = with pkgs; [

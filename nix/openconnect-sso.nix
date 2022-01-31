@@ -3,7 +3,6 @@
 , python3
 , python3Packages
 , poetry2nix
-, substituteAll
 }:
 
 poetry2nix.mkPoetryApplication {
