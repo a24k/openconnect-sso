@@ -8,7 +8,7 @@ from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.utils import ChromeType
+from webdriver_manager.core.utils import ChromeType
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from ..config import DisplayMode
 
@@ -50,7 +50,7 @@ class Browser:
             proxy.add_to_capabilities(capabilities)
 
         self.driver = webdriver.Chrome(
-            ChromeDriverManager(chrome_type=ChromeType.CHROMIUM, log_level=CRITICAL).install(),
+            ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install(),
             options=chrome_options,
             desired_capabilities=capabilities
         )
