@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "openconnect-sso"
-version = "0.8.0"
+version = "0.8.1"
 description = "Wrapper script for OpenConnect supporting Azure AD (SAMLv2) authentication to Cisco SSL-VPNs"
 license = "GPL-3.0-only"
 authors = ["László Vaskó <laszlo.vasko@outlook.com>"]
@@ -34,7 +34,7 @@ setuptools = ">40.0"
 
 PySocks = "^1.7.1"
 selenium = "^4.1.0"
-webdriver-manager = "^3.8.4"
+webdriver-manager = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 coverage_enable_subprocess = "^1.0"
