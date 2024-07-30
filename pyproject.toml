@@ -34,7 +34,7 @@ setuptools = ">40.0"
 
 PySocks = "^1.7.1"
 selenium = "^4.1.0"
-webdriver-manager = "^4.0.0"
+webdriver-manager = "^4.0.2"
 
 [tool.poetry.dev-dependencies]
 coverage_enable_subprocess = "^1.0"
