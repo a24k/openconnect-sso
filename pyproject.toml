@@ -30,7 +30,7 @@ requests = "~=2.32"
 structlog = "~=25.2"
 toml = "~=0.10"
 setuptools = ">=76.1"
-urllib3 = "<2"
+urllib3 = "~=2.3"
 
 PySocks = "~=1.7"
 selenium = "~=4.29.0"
