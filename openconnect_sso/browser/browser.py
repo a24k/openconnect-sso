@@ -3,6 +3,7 @@ import structlog
 
 from urllib.parse import urlparse
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
@@ -24,8 +25,7 @@ class Browser:
         self.scripts = []
 
     def __enter__(self):
-        chrome_options = Options()
-        capabilities = DesiredCapabilities.CHROME
+        chrome_options = webdriver.ChromeOptions()
 
         if self.display_mode == DisplayMode.HIDDEN:
             chrome_options.add_argument("--headless")
@@ -45,12 +45,11 @@ class Browser:
             else:
                 raise ValueError("Unsupported proxy type", parsed.scheme)
 
-            proxy.add_to_capabilities(capabilities)
+            chrome_options.proxy = proxy
 
         self.driver = webdriver.Chrome(
-            ChromeDriverManager().install(),
+            service=ChromeService(ChromeDriverManager().install()),
             options=chrome_options,
-            desired_capabilities=capabilities
         )
         return self
 
